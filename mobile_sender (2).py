@@ -21,7 +21,7 @@ import math
 from datetime import datetime
 import pandas as pd
 
-# ── Page Config ────────────────────────────────────────────────────────────────
+# Page Config
 st.set_page_config(
     page_title="ShieldScan · Security Health",
     page_icon="🛡",
@@ -29,7 +29,7 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# ── Global CSS ─────────────────────────────────────────────────────────────────
+# Global CSS
 st.markdown("""
 <style>
 /* ---- Google Fonts ---- */
@@ -573,9 +573,8 @@ div[data-testid="stMetricValue"] {
 """, unsafe_allow_html=True)
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+
 #  ADB HELPERS
-# ══════════════════════════════════════════════════════════════════════════════
 
 def _adb(args: list[str], timeout: int = 6) -> str:
     try:
@@ -712,10 +711,7 @@ def fetch_device_data(serial: str) -> dict:
         "fetched_at":       datetime.now(),
     }
 
-
-# ══════════════════════════════════════════════════════════════════════════════
 #  SCORING ENGINE
-# ══════════════════════════════════════════════════════════════════════════════
 
 LATEST_ANDROID = 14
 MIN_PERMISSIONS = 5
@@ -842,9 +838,7 @@ def score_glow(s: int) -> str:
     return "rgba(248,113,113,0.2)"
 
 
-# ══════════════════════════════════════════════════════════════════════════════
 #  SIDEBAR
-# ══════════════════════════════════════════════════════════════════════════════
 
 with st.sidebar:
     st.markdown("""
@@ -908,9 +902,8 @@ with st.sidebar:
     """, unsafe_allow_html=True)
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+
 #  MAIN LAYOUT
-# ══════════════════════════════════════════════════════════════════════════════
 
 st.markdown("""
 <div class="page-header">
@@ -923,7 +916,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# ── No device fallback ─────────────────────────────────────────────────────
+#  No device fallback
 if not selected_device:
     st.markdown("""
     <div style='background:linear-gradient(145deg,rgba(17,22,32,0.8),rgba(11,15,22,0.9));
@@ -956,7 +949,7 @@ if not selected_device:
         st.rerun()
     st.stop()
 
-# ── Fetch data ─────────────────────────────────────────────────────────────
+#Fetch data
 with st.spinner(""):
     d = fetch_device_data(selected_device)
 
@@ -966,7 +959,7 @@ s_label = score_label(score)
 s_glow  = score_glow(score)
 fetched_str = d["fetched_at"].strftime("%H:%M:%S")
 
-# ── Security Alert Banner ─────────────────────────────────────────────────
+# Security Alert Banner
 if score < 50:
     if score < 30:
         alert_icon  = "🚨"
@@ -1002,7 +995,7 @@ if score < 50:
     </div>
     """, unsafe_allow_html=True)
 
-# ── Row 1: Score ring + device identity ────────────────────────────────────
+#Row 1: Score ring + device identity
 col_ring, col_id, col_pad = st.columns([1.25, 2.75, 0.05])
 
 with col_ring:
@@ -1086,7 +1079,7 @@ with col_id:
 
 st.markdown("<div style='height:1.5rem'></div>", unsafe_allow_html=True)
 
-# ── Section heading helper ─────────────────────────────────────────────────
+#  Section heading helper
 def section_head(text):
     return f"""
     <div class="section-head">
@@ -1095,7 +1088,7 @@ def section_head(text):
     </div>
     """
 
-# ── Row 2: Feature Metrics ─────────────────────────────────────────────────
+# Row 2: Feature Metrics
 st.markdown(section_head("Security Feature Analysis"), unsafe_allow_html=True)
 
 c1, c2, c3, c4, c5 = st.columns(5)
@@ -1154,7 +1147,7 @@ with c5:
 
 st.markdown("<div style='height:1.5rem'></div>", unsafe_allow_html=True)
 
-# ── Row 3: Risk breakdown + Quick flags ────────────────────────────────────
+#  Row 3: Risk breakdown + Quick flags 
 col_risk, col_flags = st.columns([2.1, 0.9])
 
 with col_risk:
@@ -1237,7 +1230,7 @@ with col_flags:
 
 st.markdown("<div style='height:1rem'></div>", unsafe_allow_html=True)
 
-# ── Row 4: Score breakdown expander ───────────────────────────────────────
+# Row 4: Score breakdown expander
 with st.expander("▸  Score Breakdown by Feature", expanded=False):
     os_lag     = LATEST_ANDROID - d["os_version"]
     os_penalty = min(25, os_lag * 6)
@@ -1273,7 +1266,7 @@ with st.expander("▸  Score Breakdown by Feature", expanded=False):
         """, unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
 
-# ── Row 5: Raw ADB data expander ──────────────────────────────────────────
+# Row 5: Raw ADB data expander 
 with st.expander("▸  Raw ADB Dataset Features", expanded=False):
     raw_df = pd.DataFrame([{
         "os_version":       d["os_version"],
@@ -1300,9 +1293,7 @@ with st.expander("▸  Raw ADB Dataset Features", expanded=False):
     """, unsafe_allow_html=True)
 
 
-# ══════════════════════════════════════════════════════════════════════════════
 #  AUTO-REFRESH
-# ══════════════════════════════════════════════════════════════════════════════
 if poll_seconds:
     time.sleep(poll_seconds)
     st.rerun()
